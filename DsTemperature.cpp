@@ -42,11 +42,11 @@ DsTemperature::DsTemperature(OneWire * const wireBus,
     m_precision = 0;
     m_wireBus   = wireBus;
     m_address   = addr;
-    m_parasite  = false;
+    m_parasite  = HasParasitePowerSupply();
 }
 
 
-bool DsTemperature::ReadPowerSupply(void) {
+bool DsTemperature::HasParasitePowerSupply(void) {
     bool ret = false;
     m_wireBus->reset();
     m_wireBus->select(m_address);

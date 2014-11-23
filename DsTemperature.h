@@ -16,9 +16,9 @@ public:
     DsTemperature(OneWire * const wireBus, 
                   uint8_t const * const addr);
 
-    bool ChangeResolution(byte const resolution);
+    bool ChangeResolution(byte const precision);
 
-    bool ReadPowerSupply(void);
+    bool HasParasitePowerSupply(void);
 
     // return temperature in degree Celcius
     float GetTemperature(void);
