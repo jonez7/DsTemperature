@@ -39,7 +39,7 @@ typedef enum DallasScratchpads_e {
 
 DsTemperature::DsTemperature(OneWire * const wireBus, 
                              uint8_t const * const addr) {
-    m_precision = 0;
+    m_precision = 9;
     m_wireBus   = wireBus;
     m_address   = addr;
     m_parasite  = HasParasitePowerSupply();
@@ -102,26 +102,24 @@ bool DsTemperature::ChangeResolution(uint8_t const precision) {
     return true;
 }
 
-float DsTemperature::GetTemperature() {
-    uint8_t data[12];
-    uint16_t waitTime = 750;
+void DsTemperature::StartTemperatureMeas() {
     m_wireBus->reset();
     m_wireBus->select(m_address);
 
     m_wireBus->write(STARTCONVO, m_parasite); /*Start temperature conversion*/
+    m_convStarted = ((uint16_t)millis()) & 0x7FFF;
+}
 
-    switch (m_precision) {
-        case 9:
-            waitTime = 94;
-            break;
-        case 10:
-            waitTime = 188;
-            break;
-        case 11:
-            waitTime = 375;
-            break;
+float DsTemperature::GetTemperature() {
+    uint8_t data[12];
+
+    uint16_t const now = ((uint16_t)millis()) & 0x7FFF;
+    uint16_t const diff = (now - m_convStarted) & 0x7FFF;
+    uint16_t const neededTime = 94 * (1 << (m_precision - 9));
+
+    if ( diff < neededTime) {
+        delay(neededTime - diff);
     }
-    delay(waitTime);
     
     m_wireBus->reset();
     m_wireBus->select(m_address);

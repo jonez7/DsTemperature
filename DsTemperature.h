@@ -20,6 +20,7 @@ public:
 
     bool HasParasitePowerSupply(void);
 
+    void StartTemperatureMeas(void);
     // return temperature in degree Celcius
     float GetTemperature(void);
 
@@ -28,6 +29,7 @@ private:
     uint8_t const * m_address;
     uint8_t         m_precision;
     bool            m_parasite;
+    uint16_t        m_convStarted;
 };
 
 #endif
